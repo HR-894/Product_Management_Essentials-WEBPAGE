@@ -1,56 +1,90 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Management Essentials: Interactive Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Professional -->
-    <!-- Application Structure Plan: Is application ka structure kitab ke chapters par aadharit na hokar, thematic sections par based hai: 'PM ki Duniya', 'Tech ki Buniyaad', 'Product Banane ka Process', aur 'Career Guide'. Yeh approach user ko apni zaroorat ke hisaab se topic chunne ki azaadi deta hai, jisse learning experience non-linear aur zyada engaging banta hai. Har section ek self-contained module hai, jisme interactive elements jaise clickable cards, dynamic charts aur visual diagrams hain, taaki complex concepts ko aasaani se samjha ja sake. Navigation top par fix hai taaki user aasani se sections ke beech switch kar sake. -->
-    <!-- Visualization & Content Choices: Har concept ke liye sabse behtar interactive presentation chuna gaya hai. Jaise, Product Lifecycle ko samjhane ke liye ek dynamic Line Chart (Chart.js) use kiya gaya hai. Core skills ko interactive cards ke through dikhaya gaya hai. Client-Server jaise technical concepts ko simple HTML/CSS se bane visual diagrams se samjhaya gaya hai. Interview section mein ek random question generator hai. Yeh sab choices user engagement badhane aur information ko yaad rakhne mein madad karne ke liye ki gayi hain. Ismein koi bhi SVG ya Mermaid JS ka istemal nahi kiya gaya hai. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f7f4;
-            color: #2c3e50;
+            background-color: #f8fafc; /* Lighter background */
+            color: #1e293b; /* Darker text for contrast */
         }
+        /* Gradient Background Animation for Hero Section */
+        .hero-bg-animated {
+            background: linear-gradient(-45deg, #e0f2fe, #f0f9ff, #e0f2fe, #dbeafe);
+            background-size: 400% 400%;
+            animation: gradientAnim 15s ease infinite;
+        }
+        @keyframes gradientAnim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .nav-link {
             transition: all 0.3s ease;
             border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
         }
         .nav-link.active, .nav-link:hover {
-            color: #3498db;
-            border-bottom-color: #3498db;
+            color: #0ea5e9; /* A brighter blue */
+            border-bottom-color: #0ea5e9;
         }
         .content-section {
             display: none;
         }
         .content-section.active {
             display: block;
+            animation: fadeInSlideUp 0.7s ease-out forwards; /* Combined animation */
+        }
+        /* Keyframe for combined animation */
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .card {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-radius: 16px; /* More rounded corners */
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e2e8f0;
+            position: relative; /* For potential internal animations */
+            overflow: hidden;
         }
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 20px 30px -5px rgb(0 0 0 / 0.1), 0 10px 15px -6px rgb(0 0 0 / 0.08); /* Stronger shadow */
         }
+
+        /* Icon Hover Effect */
+        .icon-card .icon-wrapper {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .icon-card:hover .icon-wrapper {
+            transform: scale(1.1);
+        }
+        .icon-card.bg-sky-50:hover .icon-wrapper { color: #0284c7; } /* Darker blue on hover */
+        .icon-card.bg-emerald-50:hover .icon-wrapper { color: #047857; } /* Darker green on hover */
+        .icon-card.bg-amber-50:hover .icon-wrapper { color: #b45309; } /* Darker amber on hover */
+        .icon-card.bg-violet-50:hover .icon-wrapper { color: #7c2d12; } /* Darker violet on hover */
+
         .btn-primary {
-            background-color: #3498db;
+            background-color: #0ea5e9;
             color: white;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         .btn-primary:hover {
-            background-color: #2980b9;
+            background-color: #0284c7;
+            transform: translateY(-3px); /* More pronounced lift */
+            box-shadow: 0 8px 12px -2px rgb(0 0 0 / 0.15), 0 4px 6px -3px rgb(0 0 0 / 0.12);
         }
         .chart-container {
             position: relative;
@@ -74,12 +108,13 @@
         .timeline::after {
             content: '';
             position: absolute;
-            width: 6px;
-            background-color: #3498db;
+            width: 4px; /* Thinner line */
+            background-color: #cbd5e1;
             top: 0;
             bottom: 0;
             left: 50%;
-            margin-left: -3px;
+            margin-left: -2px;
+            border-radius: 2px;
         }
         .timeline-container {
             padding: 10px 40px;
@@ -96,31 +131,49 @@
         .timeline-container::after {
             content: '';
             position: absolute;
-            width: 25px;
-            height: 25px;
-            right: -17px;
-            background-color: white;
-            border: 4px solid #3498db;
+            width: 20px;
+            height: 20px;
+            right: -14px;
+            background-color: #0ea5e9;
+            border: 4px solid white;
             top: 15px;
             border-radius: 50%;
             z-index: 1;
+            box-shadow: 0 0 0 3px #0ea5e9;
+            /* Pulsating effect for timeline circles */
+            animation: pulse 2s infinite ease-out;
         }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+        }
+
         .timeline-container.right::after {
-            left: -16px;
+            left: -14px;
         }
         .timeline-content {
             padding: 20px 30px;
             background-color: white;
             position: relative;
-            border-radius: 6px;
+            border-radius: 12px;
+            /* Added transition for content */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        /* Glassmorphism Header */
+        .glass-header {
+            background-color: rgba(248, 250, 252, 0.8); /* Light background with transparency */
+            backdrop-filter: blur(10px); /* Blur effect */
+            -webkit-backdrop-filter: blur(10px); /* For Safari */
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5); /* Subtle border */
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header class="glass-header shadow-sm sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-gray-800">
+            <div class="text-2xl font-bold text-slate-800">
                 PM Essentials Guide
             </div>
             <div class="hidden md:flex space-x-8">
@@ -130,7 +183,7 @@
                 <a href="#" class="nav-link" data-target="career-guide">Career Guide</a>
             </div>
             <div class="md:hidden">
-                <select id="mobile-nav" class="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <select id="mobile-nav" class="block w-full bg-white border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500">
                     <option value="pm-world">PM ki Duniya</option>
                     <option value="tech-foundations">Tech ki Buniyaad</option>
                     <option value="pm-process">Product Banane ka Process</option>
@@ -141,174 +194,181 @@
     </header>
 
     <main class="container mx-auto px-6 py-12">
-        <section id="pm-world" class="content-section active">
-            <h1 class="text-4xl font-bold mb-4 text-center">Product Management ki Duniya</h1>
-            <p class="text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">Is section mein hum Product Management ke fundamentals ko samjhenge. Ek Product Manager (PM) kaun hota hai, uski zaroori skills kya hain, aur kaise har product apni life mein alag-alag stages se guzarta hai.</p>
+        <section class="relative overflow-hidden rounded-xl hero-bg-animated p-12 mb-16 text-center shadow-lg">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-slate-900">Product Management ki Duniya</h1>
+            <p class="text-lg md:text-xl text-slate-700 max-w-3xl mx-auto">Is section mein hum Product Management ke fundamentals ko samjhenge. Ek Product Manager (PM) kaun hota hai, uski zaroori skills kya hain, aur kaise har product apni life mein alag-alag stages se guzarta hai.</p>
+        </section>
 
+
+        <section id="pm-world" class="content-section active">
             <div class="card p-8 mb-12">
-                <h2 class="text-2xl font-bold mb-4">Product Manager Kaun Hai? (The "Mini-CEO")</h2>
-                <p class="text-gray-700">Ek Product Manager product ki success ka maalik hota hai. Woh ek pul (bridge) ki tarah kaam karta hai jo technology team (Engineers), design team, aur business team (Sales, Marketing) ko jodta hai. Uska kaam hai yeh decide karna ki customer ke liye **kya banana hai**, **kyun banana hai**, aur team ke saath milkar use **kaise banana hai**.</p>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">Product Manager Kaun Hai? (The "Mini-CEO")</h2>
+                <p class="text-slate-700 leading-relaxed">Ek Product Manager product ki success ka maalik hota hai. Woh ek pul (bridge) ki tarah kaam karta hai jo technology team (Engineers), design team, aur business team (Sales, Marketing) ko jodta hai. Uska kaam hai yeh decide karna ki customer ke liye **kya banana hai**, **kyun banana hai**, aur team ke saath milkar use **kaise banana hai**.</p>
             </div>
 
             <div class="card p-8 mb-12">
-                <h2 class="text-2xl font-bold mb-4">Core Competencies: Ek Achhe PM ki Pehchan</h2>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">Core Competencies: Ek Achhe PM ki Pehchan</h2>
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-                    <div class="p-6 bg-blue-50 rounded-lg text-center">
-                        <h3 class="font-bold text-lg">🧠 Technical Skills</h3>
-                        <p class="text-sm text-gray-600 mt-2">Technology ki samajh, taaki engineers se behtar baat ho sake.</p>
+                    <div class="p-6 bg-sky-50 rounded-lg text-center flex flex-col items-center icon-card">
+                        <span class="icon-wrapper text-sky-500 mb-3"><i class="fas fa-microchip fa-3x"></i></span>
+                        <h3 class="font-bold text-lg text-sky-800">Technical Skills</h3>
+                        <p class="text-sm text-slate-600 mt-2">Technology ki samajh, taaki engineers se behtar baat ho sake.</p>
                     </div>
-                    <div class="p-6 bg-green-50 rounded-lg text-center">
-                        <h3 class="font-bold text-lg">📈 Business Acumen</h3>
-                        <p class="text-sm text-gray-600 mt-2">Business ki samajh, taaki product se company ko fayda ho.</p>
+                    <div class="p-6 bg-emerald-50 rounded-lg text-center flex flex-col items-center icon-card">
+                        <span class="icon-wrapper text-emerald-500 mb-3"><i class="fas fa-chart-line fa-3x"></i></span>
+                        <h3 class="font-bold text-lg text-emerald-800">Business Acumen</h3>
+                        <p class="text-sm text-slate-600 mt-2">Business ki samajh, taaki product se company ko fayda ho.</p>
                     </div>
-                    <div class="p-6 bg-yellow-50 rounded-lg text-center">
-                        <h3 class="font-bold text-lg">🗣️ Communication</h3>
-                        <p class="text-sm text-gray-600 mt-2">Apni baat ko saaf-saaf samjhana aur doosron ko sunna.</p>
+                    <div class="p-6 bg-amber-50 rounded-lg text-center flex flex-col items-center icon-card">
+                        <span class="icon-wrapper text-amber-500 mb-3"><i class="fas fa-comments fa-3x"></i></span>
+                        <h3 class="font-bold text-lg text-amber-800">Communication</h3>
+                        <p class="text-sm text-slate-600 mt-2">Apni baat ko saaf-saaf samjhana aur doosron ko sunna.</p>
                     </div>
-                    <div class="p-6 bg-purple-50 rounded-lg text-center">
-                        <h3 class="font-bold text-lg">❤️ User Empathy</h3>
-                        <p class="text-sm text-gray-600 mt-2">Customer ki zarooraton ko gehraai se samajhna.</p>
+                    <div class="p-6 bg-violet-50 rounded-lg text-center flex flex-col items-center icon-card">
+                        <span class="icon-wrapper text-violet-500 mb-3"><i class="fas fa-users fa-3x"></i></span>
+                        <h3 class="font-bold text-lg text-violet-800">User Empathy</h3>
+                        <p class="text-sm text-slate-600 mt-2">Customer ki zarooraton ko gehraai se samajhna.</p>
                     </div>
                 </div>
             </div>
 
             <div class="card p-8">
-                <h2 class="text-2xl font-bold mb-4 text-center">Product Lifecycle: Har Product ki Kahani</h2>
-                <p class="text-center text-gray-600 mb-6">Har product in 4 stages se guzarta hai. Niche diye gaye chart mein stages par click karke unke baare mein jaanein.</p>
+                <h2 class="text-2xl font-bold mb-4 text-center text-slate-800">Product Lifecycle: Har Product ki Kahani</h2>
+                <p class="text-center text-slate-600 mb-6">Har product in 4 stages se guzarta hai. Niche diye gaye chart mein stages par click karke unke baare mein jaanein.</p>
                 <div class="chart-container">
                     <canvas id="productLifecycleChart"></canvas>
                 </div>
-                <div id="lifecycle-details" class="mt-6 p-6 bg-gray-50 rounded-lg text-center">
-                    <h3 id="lifecycle-title" class="text-xl font-bold">Introduction</h3>
-                    <p id="lifecycle-desc" class="mt-2 text-gray-700">Product market mein naya-naya aata hai. Focus awareness badhane par hota hai.</p>
+                <div id="lifecycle-details" class="mt-6 p-6 bg-slate-50 rounded-lg text-center transition-all duration-300">
+                    <h3 id="lifecycle-title" class="text-xl font-bold text-slate-800">Introduction</h3>
+                    <p id="lifecycle-desc" class="mt-2 text-slate-700">Product market mein naya-naya aata hai. Focus awareness badhane par hota hai.</p>
                 </div>
             </div>
         </section>
 
         <section id="tech-foundations" class="content-section">
-            <h1 class="text-4xl font-bold mb-4 text-center">Tech ki Buniyaad</h1>
-            <p class="text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">Ek Technical PM ke liye technology ki buniyaad samajhna bahut zaroori hai. Yahan hum Web/Mobile Architecture, Databases aur System Design ke core concepts ko explore karenge.</p>
+            <h1 class="text-4xl font-bold mb-4 text-center text-slate-900">Tech ki Buniyaad</h1>
+            <p class="text-lg text-slate-600 mb-12 text-center max-w-3xl mx-auto">Ek Technical PM ke liye technology ki buniyaad samajhna bahut zaroori hai. Yahan hum Web/Mobile Architecture, Databases aur System Design ke core concepts ko explore karenge.</p>
 
             <div class="grid md:grid-cols-2 gap-8 mb-8">
                 <div class="card p-8">
-                    <h2 class="text-2xl font-bold mb-4">Frontend vs. Backend</h2>
-                    <p class="text-gray-700 mb-4">Har app ke do hisse hote hain:</p>
+                    <h2 class="text-2xl font-bold mb-4 text-slate-800">Frontend vs. Backend</h2>
+                    <p class="text-slate-700 mb-4 leading-relaxed">Har app ke do hisse hote hain:</p>
                     <ul class="space-y-2">
-                        <li><strong class="text-blue-600">Frontend:</strong> Woh hissa jo aapko dikhta hai (Buttons, Forms). Yeh aapke browser ya phone mein chalta hai.</li>
-                        <li><strong class="text-green-600">Backend:</strong> Parde ke peeche ka kaam (Server, Database). Yahan saara data process aur store hota hai.</li>
+                        <li><strong class="text-sky-600">Frontend:</strong> Woh hissa jo aapko dikhta hai (Buttons, Forms). Yeh aapke browser ya phone mein chalta hai.</li>
+                        <li><strong class="text-emerald-600">Backend:</strong> Parde ke peeche ka kaam (Server, Database). Yahan saara data process aur store hota hai.</li>
                     </ul>
                 </div>
                 <div class="card p-8">
-                    <h2 class="text-2xl font-bold mb-4">APIs: The Waiter</h2>
-                    <p class="text-gray-700">API (Application Programming Interface) ek waiter ki tarah hai jo Frontend (customer) aur Backend (kitchen) ke beech communication karwata hai. Yeh do alag software ko aapas mein baat karne ka zariya hai.</p>
+                    <h2 class="text-2xl font-bold mb-4 text-slate-800">APIs: The Waiter</h2>
+                    <p class="text-slate-700 leading-relaxed">API (Application Programming Interface) ek waiter ki tarah hai jo Frontend (customer) aur Backend (kitchen) ke beech communication karwata hai. Yeh do alag software ko aapas mein baat karne ka zariya hai.</p>
                 </div>
             </div>
             
             <div class="card p-8 mb-8">
-                <h2 class="text-2xl font-bold mb-4">Database: SQL vs. NoSQL</h2>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">Database: SQL vs. NoSQL</h2>
                 <div class="grid md:grid-cols-2 gap-6 mt-6">
                     <div class="border-r pr-6 border-gray-200">
-                        <h3 class="text-xl font-semibold text-center mb-2">SQL (Relational)</h3>
-                        <p class="text-center text-gray-600">Data structured tables (jaise Excel) mein store hota hai. Example: User data table.</p>
+                        <h3 class="text-xl font-semibold text-center mb-2 text-slate-700">SQL (Relational)</h3>
+                        <p class="text-center text-slate-600">Data structured tables (jaise Excel) mein store hota hai. Example: User data table.</p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-semibold text-center mb-2">NoSQL (Non-Relational)</h3>
-                        <p class="text-center text-gray-600">Data flexible documents mein store hota hai. Big Data aur real-time apps ke liye behtar. Example: Social media posts.</p>
+                        <h3 class="text-xl font-semibold text-center mb-2 text-slate-700">NoSQL (Non-Relational)</h3>
+                        <p class="text-center text-slate-600">Data flexible documents mein store hota hai. Big Data aur real-time apps ke liye behtar. Example: Social media posts.</p>
                     </div>
                 </div>
             </div>
 
             <div class="card p-8">
-                 <h2 class="text-2xl font-bold mb-4">System Design: Jab App Bada Ho Jaye</h2>
+                 <h2 class="text-2xl font-bold mb-4 text-slate-800">System Design: Jab App Bada Ho Jaye</h2>
                 <div class="grid md:grid-cols-3 gap-6 mt-6">
                     <div class="p-6 text-center">
-                        <h3 class="font-bold text-lg">Scalability</h3>
-                        <p class="text-sm text-gray-600 mt-2">Traffic badhne par system ki capacity ko aasani se badhana.</p>
+                        <h3 class="font-bold text-lg text-slate-700">Scalability</h3>
+                        <p class="text-sm text-slate-600 mt-2">Traffic badhne par system ki capacity ko aasani se badhana.</p>
                     </div>
                      <div class="p-6 text-center">
-                        <h3 class="font-bold text-lg">Load Balancing</h3>
-                        <p class="text-sm text-gray-600 mt-2">Incoming traffic ko alag-alag servers par baantna.</p>
+                        <h3 class="font-bold text-lg text-slate-700">Load Balancing</h3>
+                        <p class="text-sm text-slate-600 mt-2">Incoming traffic ko alag-alag servers par baantna.</p>
                     </div>
                      <div class="p-6 text-center">
-                        <h3 class="font-bold text-lg">Caching</h3>
-                        <p class="text-sm text-gray-600 mt-2">Baar-baar use hone wale data ko fast memory mein store karna.</p>
+                        <h3 class="font-bold text-lg text-slate-700">Caching</h3>
+                        <p class="text-sm text-slate-600 mt-2">Baar-baar use hone wale data ko fast memory mein store karna.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="pm-process" class="content-section">
-            <h1 class="text-4xl font-bold mb-4 text-center">Product Banane ka Process</h1>
-             <p class="text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">Idea se lekar launch tak, product banane ka ek poora process hota hai. Is section mein hum Agile development, Product Strategy, User Experience (UX) design aur Data Analytics ke baare mein jaanenge.</p>
+            <h1 class="text-4xl font-bold mb-4 text-center text-slate-900">Product Banane ka Process</h1>
+             <p class="text-lg text-slate-600 mb-12 text-center max-w-3xl mx-auto">Idea se lekar launch tak, product banane ka ek poora process hota hai. Is section mein hum Agile development, Product Strategy, User Experience (UX) design aur Data Analytics ke baare mein jaanenge.</p>
 
             <div class="card p-8 mb-8">
-                <h2 class="text-2xl font-bold mb-4">Agile vs. Waterfall</h2>
-                <p class="text-gray-600 mb-6">Yeh software banane ke do alag-alag tareeke hain.</p>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">Agile vs. Waterfall</h2>
+                <p class="text-slate-600 mb-6">Yeh software banane ke do alag-alag tareeke hain.</p>
                 <div class="grid md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-xl font-semibold mb-2">Waterfall (Purana Tareeka) 🐌</h3>
-                        <p>Saari planning ek saath, fir design, fir coding. Launch ke baad hi feedback milta hai. Badlaav karna mushkil.</p>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-700">Waterfall (Purana Tareeka) 🐌</h3>
+                        <p class="leading-relaxed">Saari planning ek saath, fir design, fir coding. Launch ke baad hi feedback milta hai. Badlaav karna mushkil.</p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-semibold mb-2">Agile (Naya Tareeka) 🚀</h3>
-                        <p>Kaam ko chhote hisson (sprints) mein baantna. Har sprint ke baad feedback lena aur sudhaar karna. Badlaav karna aasaan.</p>
+                        <h3 class="text-xl font-semibold mb-2 text-slate-700">Agile (Naya Tareeka) 🚀</h3>
+                        <p class="leading-relaxed">Kaam ko chhote hisson (sprints) mein baantna. Har sprint ke baad feedback lena aur sudhaar karna. Badlaav karna aasaan.</p>
                     </div>
                 </div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="card p-8">
-                    <h2 class="text-2xl font-bold mb-4">Product Strategy & Roadmap</h2>
-                    <p class="mb-2"><strong>Strategy (Lambi Soch):</strong> Agle 2-3 saal mein product ko kahan le jaana hai.</p>
-                    <p><strong>Roadmap (Raasta):</strong> Strategy tak pahunchne ka high-level plan ki agle 3-12 mahino mein kya banayenge.</p>
+                    <h2 class="text-2xl font-bold mb-4 text-slate-800">Product Strategy & Roadmap</h2>
+                    <p class="mb-2 leading-relaxed"><strong>Strategy (Lambi Soch):</strong> Agle 2-3 saal mein product ko kahan le jaana hai.</p>
+                    <p class="leading-relaxed"><strong>Roadmap (Raasta):</strong> Strategy tak pahunchne ka high-level plan ki agle 3-12 mahino mein kya banayenge.</p>
                 </div>
                 <div class="card p-8">
-                     <h2 class="text-2xl font-bold mb-4">Data Analytics & A/B Testing</h2>
-                    <p class="mb-2"><strong>Analytics:</strong> User data ko study karke product ko behtar banana. Jaise, kitne log app use kar rahe hain (DAU/MAU).</p>
-                    <p><strong>A/B Testing:</strong> Ek hi feature ke 2 version alag-alag users ko dikhakar test karna ki kaunsa behtar hai.</p>
+                     <h2 class="text-2xl font-bold mb-4 text-slate-800">Data Analytics & A/B Testing</h2>
+                    <p class="mb-2 leading-relaxed"><strong>Analytics:</strong> User data ko study karke product ko behtar banana. Jaise, kitne log app use kar rahe hain (DAU/MAU).</p>
+                    <p class="leading-relaxed"><strong>A/B Testing:</strong> Ek hi feature ke 2 version alag-alag users ko dikhakar test karna ki kaunsa behtar hai.</p>
                 </div>
             </div>
         </section>
 
         <section id="career-guide" class="content-section">
-            <h1 class="text-4xl font-bold mb-4 text-center">Career Guide</h1>
-            <p class="text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">Product Management ek exciting career hai. Yahan hum PM ki naukri paane, interview ki taiyari karne aur career mein aage badhne ke tareekon par baat karenge.</p>
+            <h1 class="text-4xl font-bold mb-4 text-center text-slate-900">Career Guide</h1>
+            <p class="text-lg text-slate-600 mb-12 text-center max-w-3xl mx-auto">Product Management ek exciting career hai. Yahan hum PM ki naukri paane, interview ki taiyari karne aur career mein aage badhne ke tareekon par baat karenge.</p>
 
             <div class="card p-8 mb-8">
-                <h2 class="text-2xl font-bold mb-4">The PM Interview: Kya Pucha Jaata Hai?</h2>
-                <p class="text-gray-600 mb-6">PM interviews aapki problem-solving skills ko test karte hain. Ek naya sawaal dekhne ke liye button par click karein.</p>
-                <div class="bg-gray-100 p-6 rounded-lg text-center">
-                    <p id="interview-question-category" class="font-semibold text-blue-600 mb-2">Product Sense/Design</p>
-                    <p id="interview-question-text" class="text-lg text-gray-800">"Facebook ke liye ek naya feature design karo."</p>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">The PM Interview: Kya Pucha Jaata Hai?</h2>
+                <p class="text-slate-600 mb-6">PM interviews aapki problem-solving skills ko test karte hain. Ek naya sawaal dekhne ke liye button par click karein.</p>
+                <div class="bg-slate-100 p-6 rounded-lg text-center border border-slate-200">
+                    <p id="interview-question-category" class="font-semibold text-sky-600 mb-2">Product Sense/Design</p>
+                    <p id="interview-question-text" class="text-lg text-slate-800">"Facebook ke liye ek naya feature design karo."</p>
                 </div>
                 <button id="new-question-btn" class="btn-primary w-full md:w-auto mt-6 py-2 px-6 rounded-lg font-semibold">Naya Sawaal Dekhein</button>
             </div>
 
             <div class="card p-8">
-                <h2 class="text-2xl font-bold mb-4 text-center">Career Progression Path</h2>
+                <h2 class="text-2xl font-bold mb-4 text-center text-slate-800">Career Progression Path</h2>
                 <div class="timeline mt-8">
                     <div class="timeline-container left">
-                        <div class="timeline-content">
-                            <h3 class="font-bold">Associate Product Manager</h3>
-                            <p class="text-sm">Ek senior PM ke under kaam seekhna.</p>
+                        <div class="timeline-content card">
+                            <h3 class="font-bold text-slate-800">Associate Product Manager</h3>
+                            <p class="text-sm text-slate-600">Ek senior PM ke under kaam seekhna.</p>
                         </div>
                     </div>
                     <div class="timeline-container right">
-                        <div class="timeline-content">
-                            <h3 class="font-bold">Product Manager</h3>
-                            <p class="text-sm">Ek feature ya chhote product ko own karna.</p>
+                        <div class="timeline-content card">
+                            <h3 class="font-bold text-slate-800">Product Manager</h3>
+                            <p class="text-sm text-slate-600">Ek feature ya chhote product ko own karna.</p>
                         </div>
                     </div>
                     <div class="timeline-container left">
-                        <div class="timeline-content">
-                            <h3 class="font-bold">Senior Product Manager</h3>
-                            <p class="text-sm">Ek bade aur complex product ko manage karna.</p>
+                        <div class="timeline-content card">
+                            <h3 class="font-bold text-slate-800">Senior Product Manager</h3>
+                            <p class="text-sm text-slate-600">Ek bade aur complex product ko manage karna.</p>
                         </div>
                     </div>
                      <div class="timeline-container right">
-                        <div class="timeline-content">
-                            <h3 class="font-bold">Director/VP of Product</h3>
-                            <p class="text-sm">Multiple product lines aur PMs ko manage karna.</p>
+                        <div class="timeline-content card">
+                            <h3 class="font-bold text-slate-800">Director/VP of Product</h3>
+                            <p class="text-sm text-slate-600">Multiple product lines aur PMs ko manage karna.</p>
                         </div>
                     </div>
                 </div>
@@ -324,29 +384,22 @@
 
             function switchTab(targetId) {
                 navLinks.forEach(link => {
-                    if (link.dataset.target === targetId) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
+                    link.classList.toggle('active', link.dataset.target === targetId);
                 });
-
                 contentSections.forEach(section => {
+                    section.classList.remove('active');
                     if (section.id === targetId) {
+                        void section.offsetWidth; 
                         section.classList.add('active');
-                    } else {
-                        section.classList.remove('active');
                     }
                 });
-                
                 mobileNav.value = targetId;
             }
 
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const targetId = this.dataset.target;
-                    switchTab(targetId);
+                    switchTab(this.dataset.target);
                 });
             });
 
@@ -360,29 +413,26 @@
                     label: 'Product Adoption',
                     data: [10, 70, 100, 40],
                     fill: true,
-                    borderColor: 'rgb(52, 152, 219)',
-                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                    tension: 0.4
+                    borderColor: '#0ea5e9',
+                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                    tension: 0.4,
+                    pointBackgroundColor: '#0ea5e9',
+                    pointHoverRadius: 9, 
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#0ea5e9',
+                    pointHoverBorderWidth: 3, 
+                    pointRadius: 5, 
+                    pointHitRadius: 15, 
+                    hoverBorderColor: '#0ea5e9', 
+                    hoverBackgroundColor: 'rgba(14, 165, 233, 0.2)', 
                 }]
             };
             
             const lifecycleDetails = {
-                'Introduction': {
-                    title: '1. Introduction (Shuruwat)',
-                    desc: 'Product market mein naya-naya aata hai. Log use jaanna shuru karte hain. Focus awareness badhane par hota hai.'
-                },
-                'Growth': {
-                    title: '2. Growth (Badhna)',
-                    desc: 'Product popular hone lagta hai, zyaada se zyaada log use karne lagte hain. Focus market share capture karne par hota hai.'
-                },
-                'Maturity': {
-                    title: '3. Maturity (Sthirta)',
-                    desc: 'Product market mein poori tarah se establish ho jaata hai. Growth dheemi ho jaati hai. Focus optimization aur retention par hota hai.'
-                },
-                'Decline': {
-                    title: '4. Decline (Girawat)',
-                    desc: 'Nayi technology ya competition ke kaaran log product ka istemaal kam kar dete hain. Company ko naye products par focus karna hota hai.'
-                }
+                'Introduction': { title: '1. Introduction (Shuruwat)', desc: 'Product market mein naya-naya aata hai. Log use jaanna shuru karte hain. Focus awareness badhane par hota hai.' },
+                'Growth': { title: '2. Growth (Badhna)', desc: 'Product popular hone lagta hai, zyaada se zyaada log use karne lagte hain. Focus market share capture karne par hota hai.' },
+                'Maturity': { title: '3. Maturity (Sthirta)', desc: 'Product market mein poori tarah se establish ho jaata hai. Growth dheemi ho jaati hai. Focus optimization aur retention par hota hai.' },
+                'Decline': { title: '4. Decline (Girawat)', desc: 'Nayi technology ya competition ke kaaran log product ka istemaal kam kar dete hain. Company ko naye products par focus karna hota hai.' }
             };
             
             const lifecycleTitleEl = document.getElementById('lifecycle-title');
@@ -395,17 +445,12 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Market Adoption ->' }
-                        }
+                    scales: { 
+                        y: { beginAtZero: true, title: { display: true, text: 'Market Adoption ->', color: '#475569' }, grid: { color: '#e2e8f0' } }, 
+                        x: { grid: { color: '#e2e8f0' } }
                     },
-                    plugins: {
-                        legend: {
-                           display: false
-                        }
-                    },
+                    plugins: { legend: { display: false } },
+                    interaction: { intersect: false, mode: 'index', },
                     onClick: (event, elements) => {
                         if (elements.length > 0) {
                             const dataIndex = elements[0].index;
@@ -414,6 +459,14 @@
                             lifecycleTitleEl.innerText = details.title;
                             lifecycleDescEl.innerText = details.desc;
                         }
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
@@ -441,6 +494,5 @@
             });
         });
     </script>
-
 </body>
 </html>
